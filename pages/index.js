@@ -7,7 +7,8 @@ import Fab from '@material-ui/core/Fab'; //填充装饰组件
 import ScrollTop from "../components/scroll_top"  //回到顶部组件
 import Grid from '@material-ui/core/Grid';  //网格布局组件
 import Paper from "@material-ui/core/Paper"  //纸张组件
-import TextField from "@material-ui/core/TextField"
+import TextField from "@material-ui/core/TextField"  //多行输入框组件
+import Grow from  "@material-ui/core/Grow"
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -33,20 +34,22 @@ export default function Index(props) {
       style={{height:"0px"}}
       id="back-to-top-anchor" />
       {/* 占位div */}
-      <div style={{height:"5rem"}} />
+      <div style={{height:"3.8rem"}} />
       <Grid container spacing={3}>
         <Grid item xs={1}/>
         <Grid item xs={8}>
-          <TextField
-            id="outlined-multiline-static"
-            label="请输入您的病历,我来为您识别^-^"
-            multiline
-            color="primary"
-            defaultValue="请在这里输入您的病历"
-            variant="outlined"
-            fullWidth={true}
-            rows="20"
-          />
+          <Grow in={true} {...{timeout:500}}>
+            <TextField
+              id="outlined-multiline-static"
+              label="请输入您的病历,我来为您识别^-^"
+              multiline
+              color="primary"
+              defaultValue="请在这里输入您的病历"
+              variant="outlined"
+              fullWidth={true}
+              rows="18"
+            />
+          </Grow>
         </Grid>
         <Grid item xs={2}>
           <Paper className={classes.paper}>xs=3</Paper>
