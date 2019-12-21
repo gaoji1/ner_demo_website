@@ -13,6 +13,7 @@ import Divider from '@material-ui/core/Divider';  //分割线
 import Switch from "@material-ui/core/Switch"  //转换开关
 import Grid from "@material-ui/core/Grid"  //网格
 import Slide from '@material-ui/core/Slide';  //滑入动画 
+import Button from "@material-ui/core/Button"  //按钮组件
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -22,7 +23,8 @@ const useStyles = makeStyles(theme => ({
         display: "-webkit-flex", /* Safari */
         display: "flex",
         flexWrap: "wrap"
-    }
+    },
+    
     
   }));
 
@@ -119,6 +121,12 @@ function Content(props) {
                             {taggedEvent}
                         </div>
                     </Slide>
+                    <Grid container justify="flex-end" spacing={1}>
+                        <Grid item xs={3}>
+                            <Button variant="contained" color="secondary">报告识别错误</Button>
+                        </Grid>
+                        
+                    </Grid>
                 </CardContent>
             </Card>
         </div>
