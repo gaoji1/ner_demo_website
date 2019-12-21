@@ -6,7 +6,6 @@ import Header from "../components/header";  //顶栏组件
 import Fab from '@material-ui/core/Fab'; //填充装饰组件
 import ScrollTop from "../components/scroll_top"  //回到顶部组件
 import Grid from '@material-ui/core/Grid';  //网格布局组件
-import Paper from "@material-ui/core/Paper"  //纸张组件
 import TextField from "@material-ui/core/TextField"  //多行输入框组件
 import Grow from  "@material-ui/core/Grow"  //淡入动画组件
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';  //向下箭头组件
@@ -16,7 +15,8 @@ import ListItem from '@material-ui/core/ListItem';  //列表项
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';  //列表项副动作
 import ListItemText from '@material-ui/core/ListItemText'; // 列表项中文本
 import Checkbox from '@material-ui/core/Checkbox';  //复选框
-import Button from "@material-ui/core/Button"
+import Button from "@material-ui/core/Button";  //按钮
+import Dialog from "@material-ui/core/Dialog";  //对话框
 
 
 
@@ -43,13 +43,14 @@ function Index(props) {
     setCorpus(e.target.value)
   }
 
+
   const handleModelListChange = (e, model) => {
-    console.log(model)
     setModelList((modelList)=>{
       modelList.set(model, e.target.checked);
       return new Map(modelList)
     });
   }
+
   
 
   return (
@@ -149,9 +150,12 @@ function Index(props) {
               in={true}
               {...{timeout: 1800}}
               >
-                <Button variant="contained" color="primary">识别实体/事件</Button>
+                <Button 
+                variant="contained" 
+                color="primary"
+                >
+                  识别实体/事件</Button>
               </Grow>
-              
             </div>
           </div>
 
@@ -159,7 +163,7 @@ function Index(props) {
         <Grid item xs={1}/>
       </Grid>
       <Typography>{`corpus: ${corpus}`}</Typography>
-      
+
       {props.models.map(model=>{
         return (
           <p key={model}>{`key:${model} value:${modelList.get(model)}`}</p>
