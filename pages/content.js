@@ -12,60 +12,68 @@ import ToolTip from "@material-ui/core/Tooltip"  //文字提示
 import Divider from '@material-ui/core/Divider';  //分割线
 import Switch from "@material-ui/core/Switch"  //转换开关
 import Grid from "@material-ui/core/Grid"  //网格
+import Slide from '@material-ui/core/Slide';  //滑入动画 
 
 const useStyles = makeStyles(theme => ({
     card: {
-        maxWidth: "30rem",
+        maxWidth: "40rem",
     },
     contextContainer: {
         display: "-webkit-flex", /* Safari */
         display: "flex",
+        flexWrap: "wrap"
     }
     
   }));
 
 function Content(props) {
     const classes = useStyles()
-    const tagedText = props.modelOutList.map((item)=>{
-        const text = item[0]
-        const tag = item[1] 
-        const color = item[2]
-        
-        if(color == undefined){
-            return (
-                <div key={text}
-                style={{
-                    borderStyle: "solid",
-                    borderColor: "#fff",
-                    borderRadius: "8px", 
-                    backgroundColor: "#fff"
-                    }}
-                >
-                    <Typography variant="body2"
-                    style={{padding: "0.1rem"}}>{text}</Typography>
-                </div>
-            );
-        }else{
-            return (
-                <Tooltip key={text} title={tag} arrow>
-                    <div 
+    const [showEvent, setShowEvent] = useState(false)
+    const getTaggedCorpus = (targetList =>{
+        return targetList.map((item, index)=>{
+            const text = item[0]
+            const tag = item[1] 
+            const color = item[2]
+            
+            if(color == undefined){
+                return (
+                    <div key={index}
                     style={{
-                            borderStyle: "solid",
-                            borderColor: "#fff",
-                            borderRadius: "8px", 
-                            backgroundColor: color
-                            }}
+                        borderStyle: "solid",
+                        borderColor: "#fff",
+                        borderRadius: "8px", 
+                        backgroundColor: "#fff"
+                        }}
                     >
-                        <Typography variant="body2" 
+                        <Typography variant="body2"
                         style={{padding: "0.1rem"}}>{text}</Typography>
                     </div>
-                </Tooltip>
-            );
-        }
-        
-        
-        
+                );
+            }else{
+                return (
+                    <Tooltip key={index} title={tag} arrow>
+                        <div 
+                        style={{
+                                borderStyle: "solid",
+                                borderColor: "#fff",
+                                borderRadius: "8px", 
+                                backgroundColor: color
+                                }}
+                        >
+                            <Typography variant="body2" 
+                            style={{padding: "0.1rem"}}>{text}</Typography>
+                        </div>
+                    </Tooltip>
+                );
+            }
+        })
     })
+    const taggedAttribute = getTaggedCorpus(props.modelOutList)
+    const taggedEvent = getTaggedCorpus(props.eventOutList)
+
+    const handleChange = (e) => {
+        setShowEvent(e.target.checked)
+    }
     return (
         <div>
             <CssBaseline></CssBaseline>
@@ -73,25 +81,44 @@ function Content(props) {
             <div style={{height:"5rem"}}></div>
             <Card className={classes.card}>
                 <CardHeader 
-                avatar={<WidgetsIcon></WidgetsIcon>}
-                title={<Typography variant="h6">lstm</Typography>}
+                avatar={<WidgetsIcon></WidgetsIcon>}  //前面的图片
+                title={<Typography variant="h6">lstm</Typography>}  //中间的文字
                 action={
                     <Typography variant="subtitle2" style={{marginTop:"0.5rem", marginRight:"0.3rem"}}>
                         <Grid component="label" container alignItems="center" spacing={1}>
                             <Grid item>命名实体</Grid>
                             <Grid item>
-                                <Switch></Switch>
+                                <Switch onChange={handleChange}>
+                                </Switch>
                             </Grid>
                             <Grid item>事件</Grid>
                         </Grid>
                     </Typography>
-                }
+                }  //后边的按钮
                 />
-                <Divider style={{maxWidth:"94%", marginLeft:"3%"}} />
+                {/* 中间的分割线 */}
+                <Divider style={{maxWidth:"94%", marginLeft:"3%"}} />  
                 <CardContent>
-                    <div className={classes.contextContainer}>
-                        {tagedText}
-                    </div>
+                    <Slide
+                    direction="left"
+                    in={!showEvent}
+                    {...{timeout: 1000}}
+                    style={{display:showEvent?"none":undefined}}
+                    >
+                        <div className={classes.contextContainer}>
+                            {taggedAttribute}
+                        </div>
+                    </Slide>
+                    <Slide
+                    direction="right"
+                    in={showEvent}
+                    {...{timeout:1000}}
+                    style={{display:showEvent?undefined:"none"}}
+                    >
+                        <div className={classes.contextContainer}>
+                            {taggedEvent}
+                        </div>
+                    </Slide>
                 </CardContent>
             </Card>
         </div>
@@ -99,7 +126,9 @@ function Content(props) {
 }
 
 Content.getInitialProps = async ({req}) => {
-    let modelOutList = [["示例文本1", "Tag1"], ["示例文本4", "O"],["示例文本5", "O"],["示例文本2", "Tag2"],["示例文本3", "Tag3"]]
+    let modelOutList = [["示例文本1", "Tag1"], ["示例文本4", "O"],["示例文本5", "O"],["示例文本2", "Tag2"],["示例文本3", "Tag3"], ["示例文本1", "Tag1"], ["示例文本1", "Tag1"], ["示例文本1", "Tag1"], ["示例文本1", "Tag1"]]
+    let eventOutList= [["示例事件事件事件事件事件事件事件事件事件1", "Tag1"], ["示例事件事件事件事件事件事件事件事件事件2", "Tag2"],
+                        ["示例事件事件事件事件事件事件事件事件事件3", "Tag3"]]
     const tagToColor = new Map()
 
     tagToColor.set("Tag1", "rgba(18, 52, 240, 0.80)")
@@ -115,10 +144,21 @@ Content.getInitialProps = async ({req}) => {
         
         return item;
     })
+
+    eventOutList = eventOutList.map(item => {
+        if(tagToColor.has(item[1])){
+            item.push(tagToColor.get(item[1]))
+        }else{
+            item.push(undefined)
+        }
+        
+        return item;
+    })
     
     return (
         {
             modelOutList: modelOutList,
+            eventOutList: eventOutList
         }
     );
 }
